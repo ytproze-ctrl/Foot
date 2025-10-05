@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Résumé : PSG vs OM",
+    "type": "youtube",
+    "embed": "https://www.youtube.com/embed/abc123"
+  },
+  {
+    "title": "Calendrier Ligue 1",
+    "type": "site",
+    "embed": "https://www.ligue1.fr/calendrier-resultats"
+  }
+]
