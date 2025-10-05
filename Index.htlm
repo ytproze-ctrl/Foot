@@ -28,7 +28,7 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
   <script>
     // Ton flux :
-    const STREAM_URL = "https://www.yacine-tv.com/watch/24924/1377922/udinese-vs-cagliari/";
+    const STREAM_URL = "https://www.yacine-tv.com/watch/24898/1379037/newcastle-united-vs-nottingham-forest";
 
     const video = document.getElementById('video');
     const iframe = document.getElementById('iframePlayer');
