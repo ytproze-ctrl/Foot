@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lecteur flux</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background:#111; color:#eee; margin:0; display:flex; align-items:center; justify-content:center; height:100vh; }
+    .player-wrap { width:90%; max-width:1000px; }
+    video, iframe { width:100%; height:56.25vw; max-height:560px; background:#000; border:0; display:block; }
+    .controls { margin-top:12px; display:flex; gap:8px; }
+    button { padding:8px 12px; border-radius:6px; border:0; background:#2a6; color:#043; cursor:pointer; }
+    .note { margin-top:10px; color:#bbb; font-size:0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="player-wrap">
+    <video id="video" controls playsinline webkit-playsinline></video>
+    <iframe id="iframePlayer" style="display:none;" allowfullscreen sandbox="allow-same-origin allow-scripts allow-forms"></iframe>
+    <div class="controls">
+      <button id="useHls">Forcer HLS</button>
+      <button id="useIframe">Forcer iframe</button>
+      <button id="autodetect">Détection auto</button>
+    </div>
+    <div class="note" id="note"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.1/dist/hls.min.js"></script>
+  <script>
+    // Ton flux :
+    const STREAM_URL = "https://www.yacine-tv.com/watch/24924/1377922/udinese-vs-cagliari/";
+
+    const video = document.getElementById('video');
+    const iframe = document.getElementById('iframePlayer');
+    const note = document.getElementById('note');
+
+    function showNote(msg) { note.textContent = msg; }
+
+    function playHls(url) {
+      iframe.style.display = 'none';
+      video.style.display = 'block';
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url; video.play().catch(()=>{});
+        showNote('Lecture via HLS natif (Safari/iOS).'); return;
+      }
+      if (window.Hls && Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url); hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() { video.play().catch(()=>{}); });
+        showNote('Lecture via hls.js (Chrome/Firefox).');
+      } else { showNote('HLS non pris en charge.'); }
+    }
+
+    function useIframe(url) {
+      video.pause(); video.style.display = 'none'; iframe.style.display = 'block';
+      iframe.src = url; showNote('Affichage via iframe.');
+    }
+
+    function autodetect(url) {
+      if (/\.m3u8($|\?)/i.test(url) || url.includes('.m3u8')) { playHls(url); }
+      else { useIframe(url); }
+    }
+
+    document.getElementById('useHls').addEventListener('click', ()=>playHls(STREAM_URL));
+    document.getElementById('useIframe').addEventListener('click', ()=>useIframe(STREAM_URL));
+    document.getElementById('autodetect').addEventListener('click', ()=>autodetect(STREAM_URL));
+
+    autodetect(STREAM_URL);
+  </script>
+</body>
+</html>
